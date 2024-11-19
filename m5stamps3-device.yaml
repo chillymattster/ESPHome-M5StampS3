@@ -1,0 +1,98 @@
+esphome:
+  # Don't forget to change the name to something more meaningful
+  name: m5stamps3-device
+  # Flash mode 'dio' ist needed for M5StampS3 / ESP32 S3
+  platformio_options:
+    board_build.flash_mode: dio
+  # Action to start with a red status led after supplying power to the board
+  on_boot:
+    - priority: 600
+      then:
+        - light.turn_on:
+            id: status_led
+            red: 100%
+            green: 0%
+            blue: 0%
+
+# Config for M5StampS3
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+# Make the the onboard WS2812 / Neopixel LED on M5StampS3 usable.
+# color_correct limits the max.brightness of the LED
+light:
+  - platform: esp32_rmt_led_strip
+    id: status_led
+    internal: true
+    pin: GPIO21
+    num_leds: 1
+    rmt_channel: 0
+    rgb_order: GRB
+    chipset: ws2812
+    color_correct: [30%, 40%, 50%]
+    default_transition_length: 0s
+    effects:
+      - flicker:
+
+# Use button in M5StampS3
+# Flicker the LED for a short time when the button is pressed
+binary_sensor:
+  - platform: gpio
+    id: surface_button
+    internal: true
+    pin:
+      number: GPIO0
+      inverted: true
+      mode:
+        input: true
+        pullup: false
+        pulldown: false
+    filters:
+      - delayed_on_off: 20ms
+    on_press:
+      then:
+        - light.turn_on:
+            id: status_led
+            flash_length: 200ms
+            red: 0%
+            green: 0%
+            blue: 100%
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: [YOUR API PASSWORD]
+
+ota:
+  - platform: esphome
+    password: [YOUR OTA PASSWORD]
+
+wifi:
+  ssid: [YOUR SSID]
+  password: [YOUR WIFI PASSWORD]
+  # Use some actions to show successfull wifi connection via status led
+  on_connect:
+    - light.turn_on:
+        id: status_led
+        red: 0%
+        green: 100%
+        blue: 0%
+  on_disconnect:API
+    - light.turn_on:
+        id: status_led
+        red: 100%
+        green: 0%
+        blue: 0%
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "M5StampS3-Device"
+    password: [[YOUR FALLBACK WIFI PASSWORD]]
+
+captive_portal:
+    
