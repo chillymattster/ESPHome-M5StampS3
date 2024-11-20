@@ -20,9 +20,8 @@ Technically they are all the same and feature
 * USB-C interface
 <br/>
 <br/>
-<br/>
 
-## Basic YAML configuration
+## Basic yaml configuration
 Let's assume you start with the official documentation [Getting Started with ESPHome and Home Assistant](https://esphome.io/guides/getting_started_hassio.html), you most probably will try to create a first configuration using the wizard provided by ESPHome. The wizard will ask for the used board and you will encounter the first challenge as M5StampS3 is not listed. Choose the general setting `esp32-s3-devkitc-1`. In addition, I prefer to use `esp-idf` framework instead of `arduino` framework.
 
 > [!TIP]
