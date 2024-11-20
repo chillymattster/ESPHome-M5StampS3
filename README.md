@@ -108,6 +108,9 @@ wifi:
         blue: 0%
 ```
 Update your M5StampS3 and on power-on you will now see the led first being red and then switching to green after a few seconds if your wifi credentials are correct and your WIFI is in range.
+<br/>
+<br/>
+<br/>
 
 ## Configure onboard button
 The M5StampS3 has a single button connected to GPIO 0. A button is usually represented as a binary sensor. Add the following to your configuration:
@@ -166,6 +169,5 @@ Setting the `flash_length` triggers the `flicker`-effect and automatically chang
 <br/>
 <br/>
 
-**That's it, you now have the foundation to continue adding functionality and extending your configuration.**
-
+**That's it, you now have the foundation to continue adding functionality and extending your configuration.**<br/>
 **Have fun with your M5StampS3 and ESPHome** :smile:
