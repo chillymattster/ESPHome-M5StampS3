@@ -19,13 +19,12 @@ Technically they are all the same and feature
 * 10 GPIOs (23 GPIOs with 1.27 header pin)
 * USB-C interface
 <br/>
-<br/>
 
 ## Basic yaml configuration
 Let's assume you start with the official documentation [Getting Started with ESPHome and Home Assistant](https://esphome.io/guides/getting_started_hassio.html), you most probably will try to create a first configuration using the wizard provided by ESPHome. The wizard will ask for the used board and you will encounter the first challenge as M5StampS3 is not listed. Choose the general setting `esp32-s3-devkitc-1`. In addition, I prefer to use `esp-idf` framework instead of `arduino` framework.
 
 > [!TIP]
-> Before finishing the wizard, connect the M5StampS3 via USB. Luckily, as the ESP-S3 supports native USB serial connection, there shouldn't be any specific driver required. 
+> Before finishing the wizard, connect the M5StampS3 via USB. Luckily, as the ESP-S3 supports native USB serial connection, there shouldn't be any specific driver required. You have to press the button down while connecting to USB. USB connection is only required the first time, afterwards OTA can be used when M5StampS3 has wifi connection.
 
 > [!NOTE]
 > If you don't want to use the wizard, you can also copy the example configuration [m5stamps3-device.yaml](m5stamps3-device.yaml) and replace all `[..]`-placeholders with valid settings.
