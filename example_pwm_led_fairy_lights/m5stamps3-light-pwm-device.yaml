@@ -39,12 +39,15 @@ esp32:
 # Make a GPIO a PWM output for driving leds
 output:
   - platform: ledc
-    pin: ${pwm_pin}
     id: pwm_${pwm_pin}
+    pin: ${pwm_pin}
+    # Depending on transistor or mosfet for driving the led,
+    # it might be necessary to invert the output.
+    inverted: false
 
 light:
-  # Make the the onboard WS2812 / Neopixel LED on M5StampS3 usable.
-  # color_correct limits the max.brightness of the LED
+  # Make the the onboard WS2812 / Neopixel led on M5StampS3 usable.
+  # color_correct limits the max.brightness of the led
   - platform: esp32_rmt_led_strip
     id: status_led
     internal: true
