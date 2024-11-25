@@ -1,0 +1,121 @@
+substitutions:
+  # Don't forget to change the names, especially if you use more 
+  # than one device
+  device_name: [YOUR DEVICE NAME]
+  light_name: [YOUR LIGHT NAME]
+  light_id: [YOUR LIGHT ID]
+  device_description: [YOUR DEVICE DESCRIPTION]
+  pwm_pin: [YOUR GPIO PIN]
+  wifi_ssid: [YOUR SSID]
+  wifi_password: [YOUR WIFI PASSWORD]
+  api_password: [YOUR API PASSWORD]
+  ota_password: [YOUR OTA PASSWORD]
+  wifi_fallback_password: [YOUR FALLBACK WIFI PASSWORD]
+
+
+esphome:
+  name: ${device_name}
+  comment: "${device_description}"
+  # Flash mode 'dio' ist needed for M5StampS3 / ESP32 S3
+  platformio_options:
+    board_build.flash_mode: dio
+  # Action to start with a red status led after supplying power to the board
+  on_boot:
+    - priority: 600
+      then:
+        - light.turn_on:
+            id: status_led
+            red: 100%
+            green: 0%
+            blue: 0%
+
+# Config for M5StampS3
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+# Make a GPIO a PWM output for driving leds
+output:
+  - platform: ledc
+    pin: ${pwm_pin}
+    id: pwm_${pwm_pin}
+
+light:
+  # Make the the onboard WS2812 / Neopixel LED on M5StampS3 usable.
+  # color_correct limits the max.brightness of the LED
+  - platform: esp32_rmt_led_strip
+    id: status_led
+    internal: true
+    pin: GPIO21
+    num_leds: 1
+    rmt_channel: 0
+    rgb_order: GRB
+    chipset: ws2812
+    color_correct: [30%, 40%, 50%]
+    default_transition_length: 0s
+
+  - platform: monochromatic
+    id: ${light_id}
+    name: "${light_name}"
+    internal: false
+    output: pwm_${pwm_pin}
+    restore_mode: RESTORE_AND_OFF
+    default_transition_length: 0s
+    
+
+# Use button in M5StampS3
+# Toggle the light when the button is pressed
+binary_sensor:
+  - platform: gpio
+    id: surface_button
+    internal: true
+    pin:
+      number: GPIO0
+      inverted: true
+      mode:
+        input: true
+        pullup: false
+        pulldown: false
+    filters:
+      - delayed_on_off: 20ms
+    on_press:
+      then:
+        - light.toggle: ${light_id}
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "${api_password}"
+
+ota:
+  - platform: esphome
+    password: "${ota_password}"
+
+wifi:
+  ssid: "${wifi_ssid}"
+  password: "${wifi_password}"
+  # Use some actions to show successfull wifi connection via status led
+  on_connect:
+    - light.turn_on:
+        id: status_led
+        red: 0%
+        green: 100%
+        blue: 0%
+  on_disconnect:
+    - light.turn_on:
+        id: status_led
+        red: 100%
+        green: 0%
+        blue: 0%
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${device_name}"
+    password: "${wifi_fallback_password}"
+
+captive_portal:
+    
